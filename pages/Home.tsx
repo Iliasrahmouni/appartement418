@@ -116,35 +116,34 @@ const Home: React.FC = () => {
 
   return (
     <div className="bg-bg-light font-display text-text-main min-h-screen flex flex-col overflow-x-hidden">
-      <div className="flex flex-1 justify-center w-full overflow-x-hidden">
-        <div className="flex flex-col w-full max-w-[1200px] flex-1 overflow-x-hidden">
-          <Navbar theme="transparent" primaryColorClass="text-primary" />
-          
-          <main className="w-full">
-            <div className="w-full pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-12 md:pb-20 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-              <div className="w-full">
-                <div 
-                  className="flex min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh] lg:min-h-[75vh] xl:min-h-[80vh] flex-col gap-4 sm:gap-6 bg-cover bg-center bg-no-repeat rounded-xl sm:rounded-2xl items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 text-center shadow-lifted-lg relative overflow-hidden group w-full"
-                  style={{ 
-                    backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/header.jpeg")' 
-                  }}
-                  role="img"
-                  aria-label="Apartment 418 Asilah vacation rental exterior view with ocean and resort surroundings"
-                >
-                  <div className="flex flex-col gap-6 sm:gap-8 z-10 items-center px-4" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                    <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-center">
-                      {t.heroTitle}
-                    </h1>
-                    <button 
-                      onClick={() => navigate('/book')}
-                      className="z-10 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 sm:h-12 md:h-14 px-6 sm:px-8 md:px-10 bg-primary text-white text-sm sm:text-base md:text-lg font-semibold leading-normal tracking-wide hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02] shadow-lifted"
-                    >
-                      <span className="truncate">{t.heroCta}</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <Navbar theme="transparent" primaryColorClass="text-primary" />
+      
+      <main className="w-full flex flex-col">
+        {/* Full-width cover image */}
+        <div 
+          className="flex min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[90vh] xl:min-h-[100vh] flex-col gap-4 sm:gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 text-center relative overflow-hidden w-full"
+          style={{ 
+            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/header.jpeg")' 
+          }}
+          role="img"
+          aria-label="Apartment 418 Asilah vacation rental exterior view with ocean and resort surroundings"
+        >
+          <div className="flex flex-col gap-6 sm:gap-8 z-10 items-center px-4 max-w-[1200px] mx-auto" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+            <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-center">
+              {t.heroTitle}
+            </h1>
+            <button 
+              onClick={() => navigate('/book')}
+              className="z-10 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 sm:h-12 md:h-14 px-6 sm:px-8 md:px-10 bg-primary text-white text-sm sm:text-base md:text-lg font-semibold leading-normal tracking-wide hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02] shadow-lifted"
+            >
+              <span className="truncate">{t.heroCta}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Content container with max-width */}
+        <div className="flex flex-1 justify-center w-full overflow-x-hidden">
+          <div className="flex flex-col w-full max-w-[1200px] flex-1 overflow-x-hidden">
 
             <div className="pt-8 pb-6 px-4 sm:px-6 lg:px-8">
               <h2 className="text-accent text-sm sm:text-base font-semibold leading-normal tracking-[0.18em] uppercase text-center letter-spacing-wider max-w-[1200px] mx-auto">
@@ -231,10 +230,10 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </div>
-          </main>
-          <Footer />
+          </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };
