@@ -107,36 +107,30 @@ const Location: React.FC = () => {
   return (
     <div className="bg-bg-light text-text-charcoal font-display overflow-x-hidden">
       <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-        <div className="layout-container flex h-full grow flex-col overflow-x-hidden">
-          <Navbar primaryColorClass="text-primary-vivid" textColorClass="text-text-charcoal" />
+        <Navbar primaryColorClass="text-primary-vivid" textColorClass="text-text-charcoal" />
 
-          <div className="w-full flex flex-1 justify-center pt-4 sm:pt-5 md:pt-6 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-            <div className="w-full flex flex-col flex-1">
-              <div className="w-full">
-                <div className="w-full">
-                  <div 
-                    className="flex min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh] lg:min-h-[75vh] xl:min-h-[80vh] flex-col gap-6 sm:gap-8 bg-cover bg-center bg-no-repeat rounded-xl sm:rounded-2xl items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 text-center shadow-3d-light w-full"
-                    style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBCooiFLxUrBQUPZZL0uFXrZkqxcx6eix03mL1vxBLKHA2cXVzVf3zrlh4SRg-XzPK9A2Y_QGAIuwi4uHTcEeHhxF78mtL9nR61xJWuUfQ8x5S-T-oGb7GqzwgMyHfjWgZgDiLNrxmiWI9o5cMp3OUmLB_zDbvyr5V3nLlS2oL_h9zJrL2G-vNI6QRH2MifIX5bq4-97nZJ-llRYubAqV3D3V2L0Myn04Fkgzy-R8BhBrfZMSEguQ7oI17tRkdNL8yQY5YOfdBGkns")' }}
-                    role="img"
-                    aria-label="Aerial view of Asilah, Morocco showing the coastal town, medina, and beaches near Apartment 418"
-                  >
-                    <div className="flex flex-col gap-6 sm:gap-8 items-center z-10 px-4" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                      <h1 className="text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight tracking-tight drop-shadow-lg">
-                        {t.heroTitle}
-                      </h1>
-                      <button 
-                        onClick={() => navigate('/book')}
-                        className="z-10 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 sm:h-12 md:h-14 px-6 sm:px-8 md:px-10 bg-primary-vivid text-white text-sm sm:text-base md:text-lg font-semibold leading-normal tracking-wide hover:bg-primary-vivid/90 transition-all duration-300 transform hover:scale-[1.02] shadow-lifted"
-                      >
-                        <span className="truncate">{t.heroCta}</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <main className="w-full flex flex-col">
+          {/* Full-width cover image */}
+          <div 
+            className="flex min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[90vh] xl:min-h-[100vh] flex-col gap-6 sm:gap-8 bg-cover bg-center bg-no-repeat items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 text-center w-full"
+            style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/asilah.jpg")' }}
+            role="img"
+            aria-label="Aerial view of Asilah, Morocco showing the coastal town, medina, and beaches near Apartment 418"
+          >
+            <div className="flex flex-col gap-6 sm:gap-8 items-center z-10 px-4 max-w-[1200px] mx-auto" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+              <h1 className="text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight tracking-tight drop-shadow-lg">
+                {t.heroTitle}
+              </h1>
+              <button 
+                onClick={() => navigate('/book')}
+                className="z-10 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 sm:h-12 md:h-14 px-6 sm:px-8 md:px-10 bg-primary-vivid text-white text-sm sm:text-base md:text-lg font-semibold leading-normal tracking-wide hover:bg-primary-vivid/90 transition-all duration-300 transform hover:scale-[1.02] shadow-lifted"
+              >
+                <span className="truncate">{t.heroCta}</span>
+              </button>
             </div>
           </div>
 
+          {/* Content container with max-width */}
           <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 2xl:px-40 flex flex-1 justify-center py-8 sm:py-12 md:py-16 lg:py-20">
             <div className="flex flex-col w-full max-w-[1280px] flex-1 gap-8 sm:gap-10">
               <div className="text-center max-w-3xl mx-auto px-4">
@@ -236,7 +230,8 @@ const Location: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </main>
+        <Footer />
       </div>
     </div>
   );
