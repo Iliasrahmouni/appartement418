@@ -110,30 +110,30 @@ const Tour: React.FC = () => {
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col bg-bg-light font-display text-text-main overflow-x-hidden">
-      <div className="layout-container flex h-full grow flex-col overflow-x-hidden">
-        {/* Nav is shared but we render it inside layout container for strict adherence to structure if needed, but keeping standard is fine */}
-        <Navbar primaryColorClass="text-primary-dark" textColorClass="text-text-main" />
+      <Navbar primaryColorClass="text-primary-dark" textColorClass="text-text-main" />
 
-        <main className="flex flex-1 justify-center py-4 sm:py-5 md:py-6">
+      <main className="w-full flex flex-col">
+        {/* Full-width cover image */}
+        <div 
+          className="bg-cover bg-center flex flex-col items-center justify-center overflow-hidden min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[90vh] xl:min-h-[100vh] w-full"
+          style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/6.JPG")' }}
+          role="img"
+          aria-label="Gallery view of Apartment 418 Asilah vacation rental showing interior spaces"
+        >
+          <div className="flex flex-col gap-6 sm:gap-8 z-10 items-center p-4 sm:p-6 md:p-8 max-w-[1200px] mx-auto" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+            <h1 className="text-white tracking-tight font-serif text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-center px-4">{t.heroTitle}</h1>
+            <button 
+              onClick={() => navigate('/book')}
+              className="z-10 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 sm:h-12 md:h-14 px-6 sm:px-8 md:px-10 bg-primary-dark text-white text-sm sm:text-base md:text-lg font-semibold leading-normal tracking-wide hover:bg-primary-dark/90 transition-all duration-300 transform hover:scale-[1.02] shadow-lifted"
+            >
+              <span className="truncate">{t.heroCta}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Content container with max-width */}
+        <div className="flex flex-1 justify-center py-4 sm:py-5 md:py-6">
           <div className="layout-content-container flex w-full flex-col max-w-6xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
-            <div className="w-full">
-              <div 
-                className="bg-cover bg-center flex flex-col items-center justify-center overflow-hidden min-h-[300px] sm:min-h-[400px] md:min-h-[500px] lg:min-h-[600px] xl:min-h-[70vh] rounded-xl sm:rounded-2xl shadow-deep w-full"
-                style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/6.JPG")' }}
-                role="img"
-                aria-label="Gallery view of Apartment 418 Asilah vacation rental showing interior spaces"
-              >
-                <div className="flex flex-col gap-6 sm:gap-8 z-10 items-center p-4 sm:p-6 md:p-8" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                  <h1 className="text-white tracking-tight font-serif text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-center px-4">{t.heroTitle}</h1>
-                  <button 
-                    onClick={() => navigate('/book')}
-                    className="z-10 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 sm:h-12 md:h-14 px-6 sm:px-8 md:px-10 bg-primary-dark text-white text-sm sm:text-base md:text-lg font-semibold leading-normal tracking-wide hover:bg-primary-dark/90 transition-all duration-300 transform hover:scale-[1.02] shadow-lifted"
-                  >
-                    <span className="truncate">{t.heroCta}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
 
             <p className="text-text-main text-sm sm:text-base md:text-lg font-light leading-relaxed text-center max-w-3xl mx-auto pt-12 sm:pt-16 md:pt-20 pb-10 sm:pb-12 md:pb-16 px-4 sm:px-6">
               {t.introText}
@@ -205,9 +205,9 @@ const Tour: React.FC = () => {
               </button>
             </div>
           </div>
-        </main>
-        <Footer />
-      </div>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 };
