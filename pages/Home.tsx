@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -7,6 +7,12 @@ import { useLanguage } from '../context/LanguageContext';
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  const [image1Loaded, setImage1Loaded] = useState(false);
+  const [image2Loaded, setImage2Loaded] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const image1Ref = useRef<HTMLDivElement>(null);
+  const image2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.title = language === 'en'
@@ -20,6 +26,45 @@ const Home: React.FC = () => {
         : 'Appartement de vacances moderne à Asilah, Maroc. Situé dans le complexe Beralmar avec 1 chambre, 2 balcons, équipements complets. Parfait pour les familles et les couples. Réservez votre séjour à Asilah aujourd\'hui.');
     }
   }, [language]);
+
+  // Lazy load hero image (preloaded, but ensure it loads)
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setHeroLoaded(true);
+    img.src = '/images/header.jpeg';
+  }, []);
+
+  // Lazy load images below the fold
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const target = entry.target as HTMLElement;
+            const imgSrc = target.dataset.src;
+            if (imgSrc) {
+              const img = new Image();
+              if (target === image1Ref.current) {
+                img.onload = () => setImage1Loaded(true);
+              } else if (target === image2Ref.current) {
+                img.onload = () => setImage2Loaded(true);
+              }
+              img.src = imgSrc;
+              observer.unobserve(target);
+            }
+          }
+        });
+      },
+      { rootMargin: '50px' }
+    );
+
+    if (image1Ref.current) observer.observe(image1Ref.current);
+    if (image2Ref.current) observer.observe(image2Ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const copy = {
     en: {
@@ -123,7 +168,11 @@ const Home: React.FC = () => {
         <div 
           className="flex min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[90vh] xl:min-h-[100vh] flex-col gap-4 sm:gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 text-center relative overflow-hidden w-full"
           style={{ 
-            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/header.jpeg")' 
+            backgroundImage: heroLoaded 
+              ? 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/header.jpeg")'
+              : 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%)',
+            backgroundColor: heroLoaded ? 'transparent' : '#f3f4f6',
+            transition: 'background-image 0.5s ease-in-out'
           }}
           role="img"
           aria-label="Apartment 418 Asilah vacation rental exterior view with ocean and resort surroundings"
@@ -183,8 +232,13 @@ const Home: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6">
                 <article className="flex flex-col gap-4 group cursor-pointer" onClick={() => navigate('/tour')}>
                   <div 
-                    className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-2xl shadow-lifted-lg overflow-hidden transition-transform duration-500 group-hover:scale-[1.01]" 
-                    style={{ backgroundImage: 'url("/images/picture_1.jpeg")' }}
+                    ref={image1Ref}
+                    data-src="/images/picture_1.jpeg"
+                    className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-2xl shadow-lifted-lg overflow-hidden transition-all duration-500 group-hover:scale-[1.01]" 
+                    style={{ 
+                      backgroundImage: image1Loaded ? 'url("/images/picture_1.jpeg")' : 'none',
+                      backgroundColor: image1Loaded ? 'transparent' : '#f3f4f6'
+                    }}
                     role="img"
                     aria-label="Outdoor balcony and terrace spaces at Apartment 418 Asilah"
                   ></div>
@@ -195,8 +249,13 @@ const Home: React.FC = () => {
                 </article>
                 <article className="flex flex-col gap-4 group cursor-pointer" onClick={() => navigate('/tour')}>
                   <div 
-                    className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-2xl shadow-lifted-lg overflow-hidden transition-transform duration-500 group-hover:scale-[1.01]" 
-                    style={{ backgroundImage: 'url("/images/picture_2.jpg")' }}
+                    ref={image2Ref}
+                    data-src="/images/picture_2.jpg"
+                    className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-2xl shadow-lifted-lg overflow-hidden transition-all duration-500 group-hover:scale-[1.01]" 
+                    style={{ 
+                      backgroundImage: image2Loaded ? 'url("/images/picture_2.jpg")' : 'none',
+                      backgroundColor: image2Loaded ? 'transparent' : '#f3f4f6'
+                    }}
                     role="img"
                     aria-label="Interior living spaces in Apartment 418 Asilah with modern Moroccan design"
                   ></div>

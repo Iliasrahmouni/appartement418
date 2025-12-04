@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -9,6 +9,7 @@ const Location: React.FC = () => {
   const { language } = useLanguage();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
+  const [heroLoaded, setHeroLoaded] = useState(false);
 
   useEffect(() => {
     document.title = language === 'en'
@@ -22,6 +23,13 @@ const Location: React.FC = () => {
         : 'Découvrez l\'emplacement privilégié de l\'Appartement 418 dans le complexe Beralmar d\'Asilah. À seulement 5 minutes de la médina, des plages et des galeries d\'art. Votre base idéale pour explorer la côte nord du Maroc.');
     }
   }, [language]);
+
+  // Preload hero image
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setHeroLoaded(true);
+    img.src = '/images/asilah.jpg';
+  }, []);
 
   const copy = {
     en: {
@@ -113,7 +121,13 @@ const Location: React.FC = () => {
           {/* Full-width cover image */}
           <div 
             className="flex min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[90vh] xl:min-h-[100vh] flex-col gap-6 sm:gap-8 bg-cover bg-center bg-no-repeat items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 text-center w-full"
-            style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/asilah.jpg")' }}
+            style={{ 
+              backgroundImage: heroLoaded 
+                ? 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/asilah.jpg")'
+                : 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%)',
+              backgroundColor: heroLoaded ? 'transparent' : '#f3f4f6',
+              transition: 'background-image 0.5s ease-in-out'
+            }}
             role="img"
             aria-label="Aerial view of Asilah, Morocco showing the coastal town, medina, and beaches near Apartment 418"
           >

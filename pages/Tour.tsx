@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -7,6 +7,10 @@ import { useLanguage } from '../context/LanguageContext';
 const Tour: React.FC = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  const galleryImagesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const loadingRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     document.title = language === 'en' 
@@ -19,7 +23,83 @@ const Tour: React.FC = () => {
         ? 'Explore the refined interiors and amenities of Apartment 418, a luxury vacation rental in Asilah, Morocco. Master suite, dual terraces, modern kitchen, and premium amenities await.'
         : 'Découvrez les intérieurs raffinés et les équipements de l\'Appartement 418, une location de vacances de luxe à Asilah, Maroc. Suite principale, deux terrasses, cuisine moderne et équipements haut de gamme vous attendent.');
     }
+
+    // Handle hash navigation for scroll-to-section
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash === '#gallery' || hash === '#amenities') {
+        // Wait a bit for page to render
+        setTimeout(() => {
+          const element = document.querySelector(hash);
+          if (element) {
+            const offset = 80; // Account for navbar
+            const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - offset;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }, 300);
+      }
+    };
+
+    // Check hash on mount (after a delay to ensure page is rendered)
+    setTimeout(() => {
+      handleHashChange();
+    }, 100);
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   }, [language]);
+
+  // Preload hero image
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setHeroLoaded(true);
+    img.src = '/images/6.JPG';
+  }, []);
+
+  // Lazy load gallery images
+  useEffect(() => {
+    const imageSources = [
+      '/images/image_3.jpg',
+      '/images/30219098-ab93-404e-8393-a671d305db8e.jpg',
+      '/images/695b9e5a-aecd-4feb-8f89-a4aa2e1e8338.jpg',
+      '/images/90d57e5f-1475-49cc-bca8-646f3e91f114.jpg',
+      '/images/dd131eff-20bb-4124-9538-55627f665fc9.jpg',
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = galleryImagesRef.current.indexOf(entry.target as HTMLDivElement);
+            if (index >= 0 && index < imageSources.length && !loadingRef.current.has(index)) {
+              loadingRef.current.add(index);
+              const img = new Image();
+              img.onload = () => {
+                setLoadedImages((prev) => new Set([...prev, index]));
+              };
+              img.src = imageSources[index];
+              observer.unobserve(entry.target);
+            }
+          }
+        });
+      },
+      { rootMargin: '50px' }
+    );
+
+    galleryImagesRef.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const copy = {
     en: {
@@ -116,7 +196,13 @@ const Tour: React.FC = () => {
         {/* Full-width cover image */}
         <div 
           className="bg-cover bg-center flex flex-col items-center justify-center overflow-hidden min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[90vh] xl:min-h-[100vh] w-full"
-          style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/6.JPG")' }}
+          style={{ 
+            backgroundImage: heroLoaded 
+              ? 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("/images/6.JPG")'
+              : 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%)',
+            backgroundColor: heroLoaded ? 'transparent' : '#f3f4f6',
+            transition: 'background-image 0.5s ease-in-out'
+          }}
           role="img"
           aria-label="Gallery view of Apartment 418 Asilah vacation rental showing interior spaces"
         >
@@ -139,21 +225,56 @@ const Tour: React.FC = () => {
               {t.introText}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-3 sm:gap-4 px-4 sm:px-6 pb-10 sm:pb-12 md:pb-16">
+            <div id="gallery" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-3 sm:gap-4 px-4 sm:px-6 pb-10 sm:pb-12 md:pb-16 scroll-mt-20">
               <div className="md:col-span-2 md:row-span-2 overflow-hidden rounded-xl shadow-lifted transition-all duration-300 hover:shadow-deep hover:-translate-y-1">
-                <div className="w-full h-full bg-center bg-no-repeat bg-cover min-h-64" style={{ backgroundImage: 'url("/images/image_3.jpg")' }}></div>
+                <div 
+                  ref={(el) => { galleryImagesRef.current[0] = el; }}
+                  className="w-full h-full bg-center bg-no-repeat bg-cover min-h-64" 
+                  style={{ 
+                    backgroundImage: loadedImages.has(0) ? 'url("/images/image_3.jpg")' : 'none',
+                    backgroundColor: loadedImages.has(0) ? 'transparent' : '#f3f4f6'
+                  }}
+                ></div>
               </div>
               <div className="overflow-hidden rounded-xl shadow-lifted transition-all duration-300 hover:shadow-deep hover:-translate-y-1">
-                <div className="w-full h-auto bg-center bg-no-repeat aspect-[4/3] bg-cover" style={{ backgroundImage: 'url("/images/30219098-ab93-404e-8393-a671d305db8e.jpg")' }}></div>
+                <div 
+                  ref={(el) => { galleryImagesRef.current[1] = el; }}
+                  className="w-full h-auto bg-center bg-no-repeat aspect-[4/3] bg-cover" 
+                  style={{ 
+                    backgroundImage: loadedImages.has(1) ? 'url("/images/30219098-ab93-404e-8393-a671d305db8e.jpg")' : 'none',
+                    backgroundColor: loadedImages.has(1) ? 'transparent' : '#f3f4f6'
+                  }}
+                ></div>
               </div>
               <div className="overflow-hidden rounded-xl shadow-lifted transition-all duration-300 hover:shadow-deep hover:-translate-y-1">
-                <div className="w-full h-auto bg-center bg-no-repeat aspect-[4/3] bg-cover" style={{ backgroundImage: 'url("/images/695b9e5a-aecd-4feb-8f89-a4aa2e1e8338.jpg")' }}></div>
+                <div 
+                  ref={(el) => { galleryImagesRef.current[2] = el; }}
+                  className="w-full h-auto bg-center bg-no-repeat aspect-[4/3] bg-cover" 
+                  style={{ 
+                    backgroundImage: loadedImages.has(2) ? 'url("/images/695b9e5a-aecd-4feb-8f89-a4aa2e1e8338.jpg")' : 'none',
+                    backgroundColor: loadedImages.has(2) ? 'transparent' : '#f3f4f6'
+                  }}
+                ></div>
               </div>
               <div className="overflow-hidden rounded-xl shadow-lifted transition-all duration-300 hover:shadow-deep hover:-translate-y-1">
-                <div className="w-full h-auto bg-center bg-no-repeat aspect-[4/3] bg-cover" style={{ backgroundImage: 'url("/images/90d57e5f-1475-49cc-bca8-646f3e91f114.jpg")' }}></div>
+                <div 
+                  ref={(el) => { galleryImagesRef.current[3] = el; }}
+                  className="w-full h-auto bg-center bg-no-repeat aspect-[4/3] bg-cover" 
+                  style={{ 
+                    backgroundImage: loadedImages.has(3) ? 'url("/images/90d57e5f-1475-49cc-bca8-646f3e91f114.jpg")' : 'none',
+                    backgroundColor: loadedImages.has(3) ? 'transparent' : '#f3f4f6'
+                  }}
+                ></div>
               </div>
               <div className="overflow-hidden rounded-xl shadow-lifted transition-all duration-300 hover:shadow-deep hover:-translate-y-1">
-                <div className="w-full h-auto bg-center bg-no-repeat aspect-[4/3] bg-cover" style={{ backgroundImage: 'url("/images/dd131eff-20bb-4124-9538-55627f665fc9.jpg")' }}></div>
+                <div 
+                  ref={(el) => { galleryImagesRef.current[4] = el; }}
+                  className="w-full h-auto bg-center bg-no-repeat aspect-[4/3] bg-cover" 
+                  style={{ 
+                    backgroundImage: loadedImages.has(4) ? 'url("/images/dd131eff-20bb-4124-9538-55627f665fc9.jpg")' : 'none',
+                    backgroundColor: loadedImages.has(4) ? 'transparent' : '#f3f4f6'
+                  }}
+                ></div>
               </div>
             </div>
 
@@ -175,7 +296,7 @@ const Tour: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col py-12 sm:py-16 md:py-20 px-4 sm:px-6">
+            <div id="amenities" className="flex flex-col py-12 sm:py-16 md:py-20 px-4 sm:px-6 scroll-mt-20">
               <h2 className="text-center font-serif text-2xl sm:text-3xl md:text-4xl text-primary-dark mb-8 sm:mb-10 md:mb-12 tracking-tight">{t.amenitiesTitle}</h2>
               <div className="max-w-3xl w-full mx-auto space-y-4">
                 {t.amenities.map((item, idx) => (

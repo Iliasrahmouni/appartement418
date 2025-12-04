@@ -1,9 +1,34 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
 const Footer: React.FC = () => {
   const { language } = useLanguage();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleScrollToSection = (section: 'gallery' | 'amenities') => {
+    if (location.pathname === '/tour') {
+      // Already on tour page, scroll to section
+      setTimeout(() => {
+        const element = document.getElementById(section);
+        if (element) {
+          const offset = 80; // Account for navbar
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - offset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+          // Update URL hash
+          window.history.replaceState(null, '', `#${section}`);
+        }
+      }, 50);
+    } else {
+      // Navigate to tour page with hash - scroll will happen via useEffect in Tour.tsx
+      navigate(`/tour#${section}`);
+    }
+  };
 
   const copy = {
     en: {
@@ -74,12 +99,18 @@ const Footer: React.FC = () => {
             <Link className="text-sm text-text-subtle hover:text-primary transition-colors" to="/location">
               {t.location}
             </Link>
-            <Link className="text-sm text-text-subtle hover:text-primary transition-colors" to="/tour">
+            <button 
+              onClick={() => handleScrollToSection('gallery')}
+              className="text-sm text-text-subtle hover:text-primary transition-colors text-left bg-transparent border-none p-0 cursor-pointer"
+            >
               {t.gallery}
-            </Link>
-            <Link className="text-sm text-text-subtle hover:text-primary transition-colors" to="/tour">
+            </button>
+            <button 
+              onClick={() => handleScrollToSection('amenities')}
+              className="text-sm text-text-subtle hover:text-primary transition-colors text-left bg-transparent border-none p-0 cursor-pointer"
+            >
               {t.amenities}
-            </Link>
+            </button>
             <Link className="text-sm text-text-subtle hover:text-primary transition-colors" to="/book">
               {t.bookNow}
             </Link>
